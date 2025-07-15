@@ -154,8 +154,8 @@ pip install torch==2.6.0+cu124 transformers==4.52.4 scikit-learn==1.6.1 pandas==
 
 ## Contributing
 
-- Để báo lỗi hoặc đề xuất cải tiến, tạo [issue](https://github.com/your-username/your-repo/issues) trên GitHub.
-- Để đóng góp code, submit [pull request](https://github.com/your-username/your-repo/pulls) với detailed description.
+- Để báo lỗi hoặc đề xuất cải tiến, tạo [issue](https://github.com/phuhoangg/Sentiment_analysis/issues) trên GitHub.
+- Để đóng góp code, submit [pull request](https://github.com/phuhoangg/Sentiment_analysis/pulls) với detailed description.
 
 ## License
 
