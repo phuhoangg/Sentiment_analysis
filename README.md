@@ -12,7 +12,7 @@ Việc huấn luyện mô hình sử dụng tập dữ liệu [Sentiment Data Sp
 Từ các hình ảnh trực quan hóa, có thể thấy rằng:
 - Phân bố dữ liệu ở các nhãn là không đồng đều với nhau ở bộ dữ liệu gốc. Sự chênh lệch này có thể ảnh hưởng tiêu cực đến kết quả của việc huấn luyện mô hình, đặc biệt trong việc dự đoán các nhóm hiếm. Do đó, khi chia dữ liệu để huấn luyện và đưa lên Kaggle, tôi đã sử dụng oversampling đơn giản để tăng số lượng các mẫu ít với cơ chế duplicate để giữ nguyên ngữ cảnh của văn bản đầu vào.
 - Từ world cloud có thể thấy mỗi trạng thái tâm lý đều có xu hướng sử dụng từ vựng đặc trưng riêng. Tuy nhiên có thể thấy `Depression` và `Suicidal` là 2 nhóm có những đặc trưng rất giống nhau, điều này cũng rất hợp lí trong thực tế vì 2 ý nghĩa của 2 nhóm này có những điểm tương đồng rõ rệt. Nhưng cũng vì vậy mà việc phân loại 2 nhóm này trở nên khá phức tạp đối với mô hình học sâu như RoBERTa, đó là lí do kết quả huấn luyện chỉ nằm ở mức khá so với các tập dữ liệu phân hóa tốt.
-
+  
 ## Tổng Quan
 
 Cả hai notebook được thiết kế để:
@@ -161,7 +161,7 @@ pip install torch==2.6.0+cu124 transformers==4.52.4 scikit-learn==1.6.1 pandas==
 - Sau đó ta sẽ sử dụng mô hình học máy cho bài toán phân biệt 2 nhãn còn lại này. Cụ thể, ta sẽ trích xuất các đặc trưng của 2 nhãn này, giảm trọng số hoặc loại bỏ các đặc trưng xuất hiện nhiều ở cả hai nhãn. Độ chính xác của việc phân loại có thể tăng lên đáng kể vì các đặc trưng chung gây nhiễu sẽ tác động ít hơn vào kết quả.
 - Tại sao lại lựa chọn mô hình học máy? Vì nó đơn giản, khi ta giảm trọng số hoặc loại bỏ các đặc trưng chung gây nhiễu thì lúc này văn bản đầu vào có thể mất đi ngữ cảnh của nó, thứ mang tính quan trọng đối với các mô hình học sâu sử dụng `Transformer`. Nhưng đối với mô hình học máy thì nó sẽ không gây ảnh hưởng gì đáng kể đối với việc phân loại.
 - Mô hình học máy đề xuất để sử dụng là XGBoost, mô hình cho hiệu suất cao trong đa số các bài toán hiện nay.
-- 
+
 ## Contributing
 
 - Để báo lỗi hoặc đề xuất cải tiến, tạo [issue](https://github.com/phuhoangg/Sentiment_analysis/issues) trên GitHub.
