@@ -1,11 +1,11 @@
 # Sentiment Analysis với RoBERTa
 
-Chào mừng bạn đến với kho lưu trữ này! Dự án chứa hai Jupyter Notebook triển khai nhiệm vụ sentiment analysis sử dụng mô hình RoBERTa-base từ Hugging Face Transformers. Hai notebook bao gồm:
+Welcome to my Repo! Project chứa hai Jupyter Notebook cho bài toán sentiment analysis sử dụng mô hình RoBERTa-base từ Hugging Face Transformers. Hai notebook bao gồm:
 
 - **`sentiment_roberta_base.ipynb`**: Phiên bản cơ bản sử dụng `RobertaForSequenceClassification`.
 - **`sentiment_roberta_custom.ipynb`**: Phiên bản cải tiến với custom architecture để tăng performance.
 
-Dự án sử dụng tập dữ liệu [Sentiment Data Splited](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited) từ Kaggle để train và evaluate mô hình.
+Việc huấn luyện mô hình sử dụng tập dữ liệu [Sentiment Data Splited](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited) từ Kaggle.
 
 ## Tổng Quan
 
@@ -29,7 +29,7 @@ Cả hai notebook sử dụng cấu hình train sau:
 - Save `state_dict`, `LabelEncoder`, và tokenizer vào thư mục `sentiment_model_components`, nén thành `sentiment_model_components.zip`.
 
 ### 1. `sentiment_roberta_base.ipynb`
-Notebook này triển khai một mô hình sentiment analysis cơ bản sử dụng `RobertaForSequenceClassification`.
+Notebook này triển khai một mô hình cơ bản sử dụng `RobertaForSequenceClassification`.
 
 #### Key Features
 - **Model**: `RobertaForSequenceClassification` từ Hugging Face, một mô hình tiêu chuẩn với linear classifier trên top của RoBERTa-base.
@@ -42,14 +42,15 @@ Notebook này triển khai một mô hình sentiment analysis cơ bản sử d�
 
 #### Use Cases
 Phù hợp cho các dự án cần triển khai nhanh một mô hình sentiment analysis với cấu hình đơn giản và performance tốt.
+Mô hình cơ bản nhìn chung đã cho kết quả tương đối tốt đối với bộ dữ liệu bị chồng chéo thông tin như thế này.
 
 ---
 
 ### 2. `sentiment_roberta_custom.ipynb`
-Notebook này mở rộng phiên bản cơ bản với `CustomRobertaWithAttentionContrastive`, một kiến trúc tùy chỉnh để cải thiện performance và stability.
+Notebook này mở rộng phiên bản cơ bản với `CustomRobertaWithAttention`, một kiến trúc tùy chỉnh để cải thiện performance và stability.
 
 #### Model Architecture
-Kiến trúc `CustomRobertaWithAttentionContrastive` được thiết kế với các thành phần nâng cao:
+Kiến trúc `CustomRobertaWithAttention` được thiết kế với các thành phần nâng cao:
 - **RoBERTa Base**: Sử dụng `RobertaModel` từ Hugging Face làm backbone để extract contextual embeddings từ input text.
 - **MultiHeadAttentionPooling**:
   - Tích hợp ba chiến lược pooling: CLS token, mean pooling, và max pooling.
