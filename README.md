@@ -4,7 +4,8 @@ Welcome to my Repo! Project chứa hai Jupyter Notebook cho bài toán sentiment
 
 - **`sentiment_roberta_base.ipynb`**: Phiên bản cơ bản sử dụng `RobertaForSequenceClassification`.
 - **`sentiment_roberta_custom.ipynb`**: Phiên bản cải tiến với custom architecture để tăng performance.
-- Cùng với đó là một notebook cho trực quan hóa dữ liệu để có cái nhìn tổng quan, notebook này là một phần của notebook sử dụng các mô hình học máy nên có một số đoạn code bị thừa, không phù hợp (cập nhật sau).
+- (Cập nhật) Notebook cho trực quan hóa dữ liệu để có cái nhìn tổng quan, notebook này là một phần của notebook sử dụng các mô hình học máy nên có một số đoạn code bị thừa, không phù hợp (cập nhật sau).
+- (Cập nhật) Thư mục chứa thành phần của một giao diện Python dùng `Streamlit` để tạo một giao diện local, sử dụng để áp dụng mô hình đã qua huấn luyện vào dự đoán văn bản thực tế. Chi tiết cách sử dụng đọc trong `App/README.md`.
 
 Việc huấn luyện mô hình sử dụng tập dữ liệu [Sentiment Data Splited](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited) từ Kaggle.
 
