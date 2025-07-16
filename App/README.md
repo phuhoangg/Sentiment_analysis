@@ -1,7 +1,7 @@
 # RoBERTa Sentiment Analysis UI
 
 ## Tổng quan
-Dự án này triển khai một ứng dụng web phân tích cảm xúc (sentiment analysis) sử dụng mô hình RoBERTa tùy chỉnh. Ứng dụng được xây dựng bằng Streamlit, cung cấp giao diện tương tác để phân tích cảm xúc của văn bản liên quan đến trạng thái sức khỏe tinh thần.
+Dự án này triển khai một ứng dụng web phân tích cảm xúc (sentiment analysis) sử dụng mô hình RoBERTa mở rộng. Ứng dụng được xây dựng bằng Streamlit, cung cấp giao diện tương tác để phân tích cảm xúc của văn bản liên quan đến trạng thái sức khỏe tinh thần.
 
 ## Tính năng
 - Phân tích cảm xúc đa lớp (7 lớp: normal, bipolar, personality disorder, anxiety, depression, stress, suicidal)
