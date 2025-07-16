@@ -71,7 +71,7 @@ Kiến trúc `CustomRobertaWithAttention` được thiết kế với các thàn
 - **Weight Initialization**: Sử dụng Xavier/Glorot initialization cho tất cả linear layers để đảm bảo stable training.
 
 #### Key Features
-- **Loss Function**: `FocalLoss` (gamma=1.25) để focus vào hard samples và xử lý imbalanced data hiệu quả hơn `LabelSmoothingCrossEntropy`.
+- **Loss Function**: `FocalLoss` (gamma=1.25) để focus vào hard samples và xử lý imbalanced data hiệu quả hơn `LabelSmoothingCrossEntropy`. (ban đầu sử dụng Contrastive Loss nên mô hình tùy chỉnh có chứa tên Contrastive, tuy nhiên sau khi đánh giá dữ liệu, việc huấn luyện sẽ sử dụng Focal Loss)
 - **Dropout Rate**: 0.3 (`DROPOUT_RATE=0.3`) để tăng regularization, giảm overfitting trên complex datasets.
 - **Features**:
   - Enhanced feature extraction thông qua attention-based pooling.
@@ -143,6 +143,7 @@ pip install torch==2.6.0+cu124 transformers==4.52.4 scikit-learn==1.6.1 pandas==
 ## Repository Structure
 
 ```plaintext
+├── App                                 # Application
 ├── sentiment_roberta_base.ipynb        # Base notebook
 ├── sentiment_roberta_custom.ipynb      # Custom notebook
 ├── Visualization.ipynb                 # Visual
