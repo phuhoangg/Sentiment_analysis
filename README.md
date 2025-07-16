@@ -1,6 +1,6 @@
 # Sentiment Analysis với RoBERTa
 
-Welcome to my Repo! Project chứa hai Jupyter Notebook cho bài toán sentiment analysis sử dụng mô hình RoBERTa-base từ Hugging Face Transformers. Hai notebook bao gồm:
+Welcome to my Repo! Project chứa hai Jupyter Notebook cho bài toán sentiment analysis sử dụng mô hình RoBERTa-base từ Hugging Face Transformers.  Repo bao gồm:
 
 - **`sentiment_roberta_base.ipynb`**: Phiên bản cơ bản sử dụng `RobertaForSequenceClassification`.
 - **`sentiment_roberta_custom.ipynb`**: Phiên bản cải tiến với custom architecture để tăng performance.
