@@ -373,7 +373,7 @@ def main():
     st.markdown("""
     <div style="text-align: center; color: #666; padding: 20px;">
         <p>🤖 Powered by RoBERTa & Streamlit | 🧠 Sentiment Analysis</p>
-        <p>📧 Developed by Group 5 + Grok AI | 🚀 Version 1.0</p>
+        <p>📧 Developed by Grok AI | 🚀 Version 1.0</p>
     </div>
     """, unsafe_allow_html=True)
 
