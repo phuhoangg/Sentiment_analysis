@@ -1,11 +1,11 @@
-# RoBERTa Sentiment Analysis
+# RoBERTa Sentiment Analysis UI
 
 ## Tổng quan
-Dự án này triển khai một ứng dụng web phân tích cảm xúc (sentiment analysis) sử dụng mô hình RoBERTa tùy chỉnh với cơ chế attention và contrastive learning. Ứng dụng được xây dựng bằng Streamlit, cung cấp giao diện tương tác để phân tích cảm xúc của văn bản liên quan đến trạng thái sức khỏe tinh thần.
+Dự án này triển khai một ứng dụng web phân tích cảm xúc (sentiment analysis) sử dụng mô hình RoBERTa tùy chỉnh. Ứng dụng được xây dựng bằng Streamlit, cung cấp giao diện tương tác để phân tích cảm xúc của văn bản liên quan đến trạng thái sức khỏe tinh thần.
 
 ## Tính năng
 - Phân tích cảm xúc đa lớp (7 lớp: normal, bipolar, personality disorder, anxiety, depression, stress, suicidal)
-- Mô hình RoBERTa tùy chỉnh với multi-head attention pooling
+- Mô hình RoBERTa tùy chỉnh
 - Giao diện web tương tác với Streamlit
 - Hiển thị trực quan với biểu đồ pie và bar
 - Xuất kết quả sang CSV
@@ -37,46 +37,9 @@ plotly==5.24.1
 ```
 
 ## Thiết lập
-1. Đảm bảo các thành phần mô hình đã được huấn luyện trước nằm trong thư mục `E:\sentiment_model_components`:
+1. Đảm bảo các thành phần mô hình đã được huấn luyện trước nằm trong thư mục `.\sentiment_model_components`:
    - last_roberta_model.pt
    - roberta_tokenizer
    - label_encoder.joblib
 
-2. Cập nhật đường dẫn `output_dir` trong `app.py` nếu các thành phần mô hình được lưu ở vị trí khác.
-
-## Hướng dẫn sử dụng
-1. Chạy ứng dụng Streamlit:
-```bash
-streamlit run app.py
-```
-
-2. Mở trình duyệt web và truy cập `http://localhost:8501`
-
-3. Sử dụng giao diện để:
-   - Nhập văn bản cần phân tích (hỗ trợ nhiều dòng)
-   - Chọn các ví dụ mẫu từ sidebar
-   - Xem kết quả với điểm confidence
-   - Hiển thị phân bố cảm xúc qua biểu đồ
-   - Xuất kết quả sang CSV
-
-## Cấu trúc dự án
-```
-├── app.py                    # Ứng dụng Streamlit chính
-├── requirements.txt          # Các phụ thuộc của dự án
-├── README.md                 # Tài liệu dự án
-└── E:\sentiment_model_components\    # Thư mục chứa thành phần mô hình
-    ├── last_roberta_model.pt
-    ├── roberta_tokenizer
-    └── label_encoder.joblib
-```
-
-## Ghi chú phát triển
-- Mô hình sử dụng kiến trúc RoBERTa tùy chỉnh với multi-head attention pooling và contrastive learning
-- Hỗ trợ xử lý trên cả CPU và GPU (CUDA)
-- Văn bản đầu vào bị giới hạn ở 256 token (có thể cấu hình trong app.py)
-- Sử dụng Plotly để tạo biểu đồ tương tác
-- CSS được nhúng trong ứng dụng Streamlit để cải thiện UI/UX
-
-## Tác giả
-- Nhóm 5 (Hỗ trợ)
-- Grok AI
+2. Cập nhật đường dẫn `output_dir` trong `app.py` nếu các thành phần mô Phú
