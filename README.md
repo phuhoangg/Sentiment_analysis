@@ -1,176 +1,178 @@
-# Sentiment Analysis với RoBERTa
+# Mental Health Sentiment Analysis with RoBERTa
 
-Welcome to my Repo! Project chứa hai Jupyter Notebook cho bài toán sentiment analysis sử dụng mô hình RoBERTa-base từ Hugging Face Transformers.  Repo bao gồm:
+## Overview
 
-- **`sentiment_roberta_base.ipynb`**: Phiên bản cơ bản sử dụng `RobertaForSequenceClassification`.
-- **`sentiment_roberta_custom.ipynb`**: Phiên bản cải tiến với custom architecture để tăng performance.
-- (Cập nhật) Notebook cho trực quan hóa dữ liệu để có cái nhìn tổng quan, notebook này là một phần của notebook sử dụng các mô hình học máy nên có một số đoạn code bị thừa, không phù hợp (cập nhật sau).
-- (Cập nhật) Thư mục chứa thành phần của một giao diện Python dùng `Streamlit` để tạo một giao diện local, sử dụng để áp dụng mô hình đã qua huấn luyện vào dự đoán văn bản thực tế. Chi tiết cách sử dụng đọc trong `App/README.md`.
+This project implements a comprehensive sentiment analysis system for mental health text classification using two variants of the RoBERTa model. The core of this project consists of detailed Jupyter Notebook implementations that demonstrate the training, evaluation, and comparison of different RoBERTa-based architectures for mental health sentiment analysis.
 
-Việc huấn luyện mô hình sử dụng tập dữ liệu [Sentiment Data Splited](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited) từ Kaggle.
+The system classifies text into 7 mental health categories:
+- Normal
+- Bipolar
+- Personality Disorder
+- Anxiety
+- Depression
+- Stress
+- Suicidal
 
-## Tổng quan về dữ liệu từ notebook **`Visualization.ipynb`**:
-Từ các hình ảnh trực quan hóa, có thể thấy rằng:
-- Phân bố dữ liệu ở các nhãn là không đồng đều với nhau ở bộ dữ liệu gốc. Sự chênh lệch này có thể ảnh hưởng tiêu cực đến kết quả của việc huấn luyện mô hình, đặc biệt trong việc dự đoán các nhóm hiếm. Do đó, khi chia dữ liệu để huấn luyện và đưa lên Kaggle, tôi đã sử dụng oversampling đơn giản để tăng số lượng các mẫu ít với cơ chế duplicate để giữ nguyên ngữ cảnh của văn bản đầu vào.
-- Từ world cloud có thể thấy mỗi trạng thái tâm lý đều có xu hướng sử dụng từ vựng đặc trưng riêng. Tuy nhiên có thể thấy `Depression` và `Suicidal` là 2 nhóm có những đặc trưng rất giống nhau, điều này cũng rất hợp lí trong thực tế vì 2 ý nghĩa của 2 nhóm này có những điểm tương đồng rõ rệt. Nhưng cũng vì vậy mà việc phân loại 2 nhóm này trở nên khá phức tạp đối với mô hình học sâu như RoBERTa, đó là lí do kết quả huấn luyện chỉ nằm ở mức khá so với các tập dữ liệu phân hóa tốt.
-  
-## Tổng Quan
+## Project Structure
 
-Cả hai notebook được thiết kế để:
-- Preprocess dữ liệu văn bản và nhãn cảm xúc.
-- Train mô hình với các kỹ thuật như mixed precision training, cosine learning rate scheduling, và xử lý imbalanced data.
-- Evaluate performance thông qua metric chính là weighted F1-score, cùng với error analysis.
-- Save mô hình, tokenizer, và các thành phần liên quan để reuse.
+```
+├── sentiment_roberta_base.ipynb      # Base RoBERTa model implementation
+├── sentiment_roberta_custom.ipynb    # Custom RoBERTa model implementation
+├── Visualization.ipynb               # Data exploration and visualization
+├── App/                              # Streamlit web application (additional component)
+│   ├── app.py                       # Main application
+│   ├── model.py                     # Model implementations
+│   ├── sentiment_analyzer.py        # Analysis functions
+│   ├── ui_components.py             # UI components
+│   ├── requirements.txt             # Dependencies
+│   ├── README.md                    # Application documentation
+│   └── sentiment_model_components/
+│       ├── roberta_tokenizer/       # Tokenizer files
+│       ├── label_encoder.joblib     # Label encoder
+│       └── training_metrics_with_f1.png  # Training visualization
+├── README.md                         # This file
+└── LICENSE                           # MIT License
+```
 
-### Cấu Hình Train Chung
-Cả hai notebook sử dụng cấu hình train sau:
-- Max sequence length: 512 (`MAX_LENGTH=512`).
-- Batch size: 16 (`BATCH_SIZE=16`).
-- Epochs: 5 (`EPOCHS=5`).
-- Learning rate: 2e-5 (`LEARNING_RATE=2e-5`).
-- Warmup steps: 100 (`WARMUP_STEPS=100`).
-- Mixed precision training với `GradScaler` và `autocast` để optimize GPU performance.
-- Cosine learning rate scheduler với warmup.
-- Xử lý imbalanced data bằng class weights.
-- Visualize loss, accuracy, và F1-score cho train/validation sets.
-- Save `state_dict`, `LabelEncoder`, và tokenizer vào thư mục `sentiment_model_components`, nén thành `sentiment_model_components.zip`.
+## Core Implementation (Jupyter Notebooks)
 
-### 1. `sentiment_roberta_base.ipynb`
-Notebook này triển khai một mô hình cơ bản sử dụng `RobertaForSequenceClassification`.
+### 1. Base RoBERTa Implementation (`sentiment_roberta_base.ipynb`)
 
-#### Key Features
-- **Model**: `RobertaForSequenceClassification` từ Hugging Face, một mô hình tiêu chuẩn với linear classifier trên top của RoBERTa-base.
-- **Loss Function**: `LabelSmoothingCrossEntropy` (smoothing=0.1) để cải thiện generalization bằng cách giảm confidence trên nhãn đúng.
-- **Dropout Rate**: 0.1 (`DROPOUT_RATE=0.1`).
-- **Features**:
-  - Sử dụng RoBERTa-base pre-trained weights.
-  - Error analysis trên test set, lưu kết quả (accuracy, predictions, labels, probabilities).
-- **Performance**: Weighted F1-score trên test set đạt khoảng **82.6%**.
+This notebook implements a standard sentiment analysis model using `RobertaForSequenceClassification` from Hugging Face Transformers.
 
-#### Use Cases
-Phù hợp cho các dự án cần triển khai nhanh một mô hình sentiment analysis với cấu hình đơn giản và performance tốt.
-Mô hình cơ bản nhìn chung đã cho kết quả tương đối tốt đối với bộ dữ liệu bị chồng chéo thông tin như thế này.
+**Key Features:**
+- Uses the pre-trained `roberta-base` model with a linear classification head
+- Implements Label Smoothing Cross Entropy loss function for improved generalization
+- Mixed precision training with `GradScaler` and `autocast` for performance optimization
+- Cosine learning rate scheduling with warmup
+- Class weighting to handle imbalanced dataset
+- Comprehensive error analysis with confusion matrices and misclassification examples
+- Model persistence with tokenizer and label encoder
 
----
+**Performance:** Achieved approximately **82.6%** weighted F1-score on the test set.
 
-### 2. `sentiment_roberta_custom.ipynb`
-Notebook này mở rộng phiên bản cơ bản với `CustomRobertaWithAttention`, một kiến trúc tùy chỉnh để cải thiện performance và stability.
+### 2. Custom RoBERTa Implementation (`sentiment_roberta_custom.ipynb`)
 
-#### Model Architecture
-Kiến trúc `CustomRobertaWithAttention` được thiết kế với các thành phần nâng cao:
-- **RoBERTa Base**: Sử dụng `RobertaModel` từ Hugging Face làm backbone để extract contextual embeddings từ input text.
-- **MultiHeadAttentionPooling**:
-  - Tích hợp ba chiến lược pooling: CLS token, mean pooling, và max pooling.
-  - Sử dụng multi-head attention mechanism (12 heads, hidden_size=768) để weigh token representations, kết hợp với layer normalization để stabilize training.
-  - Output là một vector kết hợp từ các pooling strategies, được chiếu qua một linear layer để giảm dimension.
-- **Multi-Layer Classifier**:
-  - Gồm ba dense layers (768→512, 512→256, 256→128) với GELU activation và batch normalization để giảm internal covariate shift.
-  - Residual connections giữa các layer (768→512, 512→256) để preserve information và mitigate vanishing gradients.
-  - Feature attention mechanism (8 heads, embed_dim=256) để focus vào discriminative features, đặc biệt hữu ích cho similar classes.
-- **Metric Learning**: Feature projection layer (256→128) với L2 normalization để hỗ trợ contrastive learning, cải thiện separation giữa các class.
-- **Weight Initialization**: Sử dụng Xavier/Glorot initialization cho tất cả linear layers để đảm bảo stable training.
+This notebook implements an enhanced architecture with multiple custom components designed to improve performance.
 
-#### Key Features
-- **Loss Function**: `FocalLoss` (gamma=1.25) để focus vào hard samples và xử lý imbalanced data hiệu quả hơn `LabelSmoothingCrossEntropy`. (ban đầu sử dụng Contrastive Loss nên mô hình tùy chỉnh có chứa tên Contrastive, tuy nhiên sau khi đánh giá dữ liệu, việc huấn luyện sẽ sử dụng Focal Loss)
-- **Dropout Rate**: 0.3 (`DROPOUT_RATE=0.3`) để tăng regularization, giảm overfitting trên complex datasets.
-- **Features**:
-  - Enhanced feature extraction thông qua attention-based pooling.
-  - Improved stability với batch normalization và residual connections.
-  - Error analysis trên test set với detailed metrics.
-- **Performance**: Weighted F1-score trên test set đạt khoảng **83.1%**, cải thiện so với phiên bản cơ bản nhờ kiến trúc phức tạp hơn và `FocalLoss`.
+**Key Features:**
+- Custom model architecture with `MultiHeadAttentionPooling`
+- Combines three pooling strategies: CLS token, mean pooling, and max pooling
+- Multi-layer classifier with batch normalization and residual connections
+- Feature attention mechanism for discriminative learning
+- Metric learning with feature projection and L2 normalization
+- Focal Loss with gamma=1.25 for handling imbalanced data
+- Enhanced error analysis with detailed metrics and visualizations
 
-#### Use Cases
-Phù hợp cho các trường hợp cần high-performance model, xử lý complex data hoặc yêu cầu F1-score cao hơn, đặc biệt khi dataset có nhiều class hoặc imbalanced.
+**Performance:** Achieved approximately **83.1%** weighted F1-score on the test set.
 
----
+### 3. Data Visualization and Analysis (`Visualization.ipynb`)
+
+This notebook provides comprehensive data exploration and visualization.
+
+**Key Features:**
+- Dataset distribution analysis across all 7 sentiment categories
+- Text length analysis with visualizations
+- Word clouds for each sentiment category
+- Identification of lexical patterns specific to each mental health state
+- Analysis of data imbalance and preprocessing strategies
 
 ## Dataset
 
-Dự án sử dụng tập dữ liệu [Sentiment Data Splited](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited) từ Kaggle (Dataset ID: 7725403).
+The project uses the [Sentiment Data Splited](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited) dataset from Kaggle, which contains text samples labeled with mental health sentiment categories.
 
-### Dataset Details
-- **Columns**:
-  - `processed_text`: Văn bản đã preprocess, sẵn sàng để tokenize.
-  - `status`: Nhãn cảm xúc (string hoặc numeric, được encode bằng `LabelEncoder`).
-- **Structure**: Đã split thành train, validation, và test sets.
-- **Usage**: Thiết kế cho sentiment analysis, phù hợp với deep learning models như RoBERTa.
-- **Access**: Tải từ Kaggle và đặt trong thư mục phù hợp trước khi chạy notebook.
+Key characteristics:
+- 7 sentiment categories with imbalanced distribution
+- Preprocessed text ready for tokenization
+- Split into train, validation, and test sets
+- Original dataset augmented with oversampling to handle class imbalance
 
-## Cài Đặt
+## Model Comparison
 
-Cài đặt các dependencies sau:
+| Aspect | Base RoBERTa | Custom RoBERTa |
+|--------|--------------|----------------|
+| Architecture | Standard `RobertaForSequenceClassification` | Enhanced with attention pooling and residual connections |
+| Loss Function | Label Smoothing Cross Entropy | Focal Loss (gamma=1.25) |
+| Dropout Rate | 0.1 | 0.3 |
+| Key Enhancements | None | Multi-head attention pooling, batch normalization, residual connections |
+| Test Weighted F1-Score | ~82.6% | ~83.1% |
 
-```bash
-pip install torch==2.6.0+cu124 transformers==4.52.4 scikit-learn==1.6.1 pandas==2.2.2 numpy==2.0.2 matplotlib seaborn tqdm joblib
-```
+## Training Configuration
 
-### Hardware Requirements
-- **GPU**: Khuyến nghị Tesla T4 hoặc tương đương để train nhanh.
-- **CPU**: Có thể sử dụng, nhưng training time sẽ lâu hơn.
-- **RAM**: Tối thiểu 16GB để xử lý large datasets và models.
+Both models were trained with the following configuration:
+- Maximum sequence length: 512 tokens
+- Batch size: 16
+- Number of epochs: 5
+- Learning rate: 2e-5
+- Warmup steps: 100
+- Mixed precision training enabled
+- Cosine learning rate scheduler with warmup
+- Early stopping with patience of 2 epochs
 
-### Environment
-- Python: 3.11.11
-- Jupyter Notebook hoặc Google Colab với GPU support.
+## Results and Findings
 
-## Hướng Dẫn Sử Dụng
+### Performance Analysis
+- The custom RoBERTa model achieved a modest improvement of 0.5% in weighted F1-score
+- Both models performed well on majority classes but struggled with minority classes
+- "Depression" and "Suicidal" categories showed significant overlap, making them challenging to distinguish
+- "Normal" category achieved the highest classification accuracy across both models
 
-1. **Chuẩn bị Dataset**:
-   - Tải [Sentiment Data Splited](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited) từ Kaggle.
-   - Đặt các file (train, validation, test) vào thư mục phù hợp và update đường dẫn trong notebook nếu cần.
+### Error Analysis
+- Most misclassifications occurred between semantically similar categories
+- High confidence wrong predictions often involved texts with mixed emotional signals
+- The custom model showed improved discrimination between similar classes due to its enhanced architecture
 
-2. **Cài Đặt Environment**:
-   - Chạy lệnh `pip` ở trên để cài đặt dependencies.
-   - Đảm bảo GPU availability nếu muốn optimize training.
+### Visualization Insights
+- Each mental health category exhibited distinct lexical patterns
+- Text length varied significantly across categories
+- The dataset showed significant class imbalance that was addressed through oversampling
 
-3. **Chạy Notebook**:
-   - Mở `sentiment_roberta_base.ipynb` hoặc `sentiment_roberta_custom.ipynb` trong Jupyter/Colab.
-   - Run cells theo thứ tự để:
-     - Preprocess data.
-     - Train model.
-     - Evaluate performance và save results.
-   - Check visualizations (loss, accuracy, F1-score) trong notebook.
+## Additional Component: Streamlit Web Application
 
-4. **Reuse Model**:
-   - Unzip `sentiment_model_components.zip` để lấy thư mục `sentiment_model_components`.
-   - Sử dụng hàm `load_model_and_tokenizer` để load model và tokenizer.
-   - Apply model cho inference trên new data.
+A Streamlit web application is included as an additional component to demonstrate real-time sentiment analysis using the trained models. This application allows users to:
 
-5. **Customization**:
-   - Adjust hyperparameters (`MAX_LENGTH`, `BATCH_SIZE`, `EPOCHS`, `LEARNING_RATE`, `DROPOUT_RATE`) để optimize cho specific dataset.
-   - Experiment với `gamma` trong `FocalLoss` (custom notebook) hoặc smoothing trong `LabelSmoothingCrossEntropy` (base notebook) để improve performance.
+- Switch between base and custom RoBERTa models
+- Analyze single or multiple text inputs
+- View results with confidence scores
+- Download analysis results as CSV
+- Visualize sentiment distribution with interactive charts
 
-## Repository Structure
+For details on the web application, see `App/README.md`.
 
-```plaintext
-├── App                                 # Application
-├── sentiment_roberta_base.ipynb        # Base notebook
-├── sentiment_roberta_custom.ipynb      # Custom notebook
-├── Visualization.ipynb                 # Visual
-├── README.md                          # Project description
-└── LICENSE
-```
+## Requirements
 
-## Performance Comparison
+For running the Jupyter Notebooks:
+- Python 3.8+
+- PyTorch 2.6.0+
+- Transformers 4.52.4
+- Scikit-learn 1.6.1
+- Pandas 2.2.2
+- NumPy 2.0.2
+- Matplotlib and Seaborn
+- tqdm and joblib
 
-| Notebook                          | Test Weighted F1-score | Key Features                              |
-|-----------------------------------|------------------------|-------------------------------------------|
-| `sentiment_roberta_base.ipynb`    | ~82.6%                | `RobertaForSequenceClassification`, `LabelSmoothingCrossEntropy`, simple architecture. |
-| `sentiment_roberta_custom.ipynb`  | ~83.1%                | `CustomRobertaWithAttentionContrastive`, `FocalLoss`, `MultiHeadAttentionPooling`, residual connections, batch normalization, feature attention, metric learning. |
+## Usage
 
-## Hướng cải tiến tương lai
-- Để cải thiện hiệu suất của mô hình, có thể tách mô hình thành 2 lớp, một lớp sẽ sử dụng để phân loại 6 nhãn trong đó ta sẽ gộp 2 nhãn `Suicidal` và `Depression` tạo thành 1 nhãn mới.
-- Sau đó ta sẽ sử dụng mô hình học máy cho bài toán phân biệt 2 nhãn còn lại này. Cụ thể, ta sẽ trích xuất các đặc trưng của 2 nhãn này, giảm trọng số hoặc loại bỏ các đặc trưng xuất hiện nhiều ở cả hai nhãn. Độ chính xác của việc phân loại có thể tăng lên đáng kể vì các đặc trưng chung gây nhiễu sẽ tác động ít hơn vào kết quả.
-- Tại sao lại lựa chọn mô hình học máy? Vì nó đơn giản, khi ta giảm trọng số hoặc loại bỏ các đặc trưng chung gây nhiễu thì lúc này văn bản đầu vào có thể mất đi ngữ cảnh của nó, thứ mang tính quan trọng đối với các mô hình học sâu sử dụng `Transformer`. Nhưng đối với mô hình học máy thì nó sẽ không gây ảnh hưởng gì đáng kể đối với việc phân loại.
-- Mô hình học máy đề xuất để sử dụng là XGBoost, mô hình cho hiệu suất cao trong đa số các bài toán hiện nay.
+1. Download the dataset from [Kaggle](https://www.kaggle.com/datasets/luilailayda123/sentiment-data-splited)
+2. Place the train, validation, and test CSV files in the project directory
+3. Run the Jupyter notebooks:
+   - Start with `sentiment_roberta_base.ipynb` for the base implementation
+   - Run `sentiment_roberta_custom.ipynb` for the enhanced model
+   - Use `Visualization.ipynb` for data exploration
 
-## Contributing
+## Future Improvements
 
-- Để báo lỗi hoặc đề xuất cải tiến, tạo [issue](https://github.com/phuhoangg/Sentiment_analysis/issues) trên GitHub.
-- Để đóng góp code, submit [pull request](https://github.com/phuhoangg/Sentiment_analysis/pulls) với detailed description.
+1. Implement a two-stage classification approach to better distinguish between "Depression" and "Suicidal" categories
+2. Experiment with ensemble methods combining both model variants
+3. Explore data augmentation techniques beyond simple oversampling
+4. Investigate domain-specific pre-trained models for mental health text
 
 ## License
 
-Dự án được cấp phép theo [MIT License](https://opensource.org/licenses/MIT). Xem chi tiết trong file [LICENSE](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## Acknowledgments
+
+- Hugging Face for the Transformers library
+- Kaggle for the dataset
+- PyTorch for the deep learning framework
